@@ -550,8 +550,8 @@
             el.style.whiteSpace = 'normal';
 
             // 최소 폰트 하한(floor): 어떤 문제든 이 크기 미만으로 줄어들지 않게.
-            // 가로 폭에 비례해서 자동 조정 (1600px 화면 ≈ 128px / 1280px ≈ 102px / 1024px ≈ 82px)
-            const minPx = Math.max(72, Math.round(availW * 0.08));
+            // 가로 폭에 비례해서 자동 조정 (1600px 화면 ≈ 256px / 1280px ≈ 205px / 1024px ≈ 164px)
+            const minPx = Math.max(144, Math.round(availW * 0.16));
 
             const fits = (px) => {
                 el.style.fontSize = px + 'px';
