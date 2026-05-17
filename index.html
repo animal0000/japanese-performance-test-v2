@@ -98,14 +98,18 @@
                         radial-gradient(circle at 90% 80%, rgba(192, 57, 43, 0.03) 0%, transparent 40%);
         }
         .quiz-text {
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            line-height: 1.3;
+            /* font-size는 JS의 fitQuestionText()가 실시간으로 계산해 inline으로 주입 */
+            line-height: 1.25;
             font-weight: 900;
             color: var(--color-primary);
             text-shadow: 0 10px 30px rgba(26, 47, 138, 0.1);
-            padding: 2rem;
-            word-break: keep-all;
+            padding: 1.5rem;
+            /* 일본어/한국어 모두 자연스럽게 줄바꿈 허용 (긴 문장도 잘리지 않도록) */
+            word-break: normal;
+            overflow-wrap: anywhere;
+            max-width: 100%;
         }
+        .quiz-container { overflow: hidden; }
 
         /* 버튼 */
         .btn-premium {
@@ -478,13 +482,6 @@
          */
         function renderQuiz(container) {
             const q = state.quiz[state.currentIdx];
-            
-            // 텍스트 길이에 따른 동적 폰트 사이즈 조절
-            const len = q.question.length;
-            let dynamicFontSize = 'clamp(4rem, 10vw, 8rem)'; // 매우 짧은 단어
-            if (len > 30) dynamicFontSize = 'clamp(1.5rem, 3.5vw, 2.5rem)'; // 아주 긴 문장
-            else if (len > 15) dynamicFontSize = 'clamp(2rem, 5vw, 3.5rem)'; // 긴 문장
-            else if (len > 6) dynamicFontSize = 'clamp(3rem, 7vw, 5rem)'; // 중간 길이 문장
 
             container.innerHTML = `
                 <div class="flex flex-col flex-grow fade-in h-full">
@@ -512,7 +509,7 @@
                         <div class="absolute inset-0 opacity-[0.02] select-none pointer-events-none flex flex-wrap gap-10 p-10 overflow-hidden font-black text-4xl">
                             ${Array(100).fill('あいうえお').join(' ')}
                         </div>
-                        <div class="quiz-text text-center select-none japanese-font" style="font-size: ${dynamicFontSize};">
+                        <div class="quiz-text text-center select-none japanese-font">
                             ${q.question}
                         </div>
                     </div>
@@ -528,7 +525,48 @@
                 </div>
             `;
             updateProgressBar();
+            // 레이아웃이 그려진 뒤 컨테이너 실측 → 최대 폰트 자동 산출
+            requestAnimationFrame(() => requestAnimationFrame(fitQuestionText));
         }
+
+        /**
+         * 문제 텍스트를 컨테이너에 맞춰 최대한 크게 키우되 잘리지 않도록 조절.
+         * 이분 탐색으로 fit-to-box (가로/세로 모두 만족하는 최대 폰트 px).
+         */
+        function fitQuestionText() {
+            const box = document.querySelector('.quiz-container');
+            const el  = box && box.querySelector('.quiz-text');
+            if (!box || !el) return;
+
+            // 컨테이너 가용 영역 (안전 여백 8px)
+            const safety = 8;
+            const availW = box.clientWidth  - safety;
+            const availH = box.clientHeight - safety;
+            if (availW <= 0 || availH <= 0) return;
+
+            // 측정 전 max-width 고정 → 줄바꿈 기준 일치
+            el.style.maxWidth = availW + 'px';
+            el.style.whiteSpace = 'normal';
+
+            const fits = (px) => {
+                el.style.fontSize = px + 'px';
+                return el.scrollWidth <= availW && el.scrollHeight <= availH;
+            };
+
+            // 짧은 단어는 매우 크게, 긴 문장은 자연스러운 하한
+            let lo = 14, hi = 360, best = lo;
+            while (lo <= hi) {
+                const mid = (lo + hi) >> 1;
+                if (fits(mid)) { best = mid; lo = mid + 1; }
+                else           { hi = mid - 1; }
+            }
+            el.style.fontSize = best + 'px';
+        }
+
+        // 창 크기 변경 시에도 재계산
+        window.addEventListener('resize', () => {
+            if (state.view === 'QUIZ') fitQuestionText();
+        });
 
         function startTimer() {
             if (state.timerId) clearInterval(state.timerId);
