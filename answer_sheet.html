@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일본어 수행평가 답안지 - 배재중학교</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paichai-navy: #1A2F8A;
+            --paichai-red: #C0392B;
+        }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            padding: 40px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm 20mm;
+            background: white;
+            box-shadow: 0 10px 30px rgba(26, 47, 138, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .a4-page { margin: 0; box-shadow: none; width: 100%; height: 100vh; padding: 15mm 20mm; }
+            .no-print { display: none !important; }
+            .print-border-navy { border-color: black !important; }
+            .print-bg-none { background: none !important; color: black !important; }
+        }
+        
+        /* Identity Table */
+        .identity-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .identity-table td {
+            border: 1px solid #e2e8f0;
+            padding: 10px 15px;
+            text-align: center;
+        }
+        .identity-label {
+            background-color: #f8fafc;
+            font-weight: 900;
+            color: var(--paichai-navy);
+            width: 80px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .identity-value {
+            min-width: 60px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Answer Grid */
+        .answer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .answer-table th {
+            background-color: var(--paichai-navy);
+            color: white;
+            padding: 12px;
+            font-size: 0.75rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .answer-table td {
+            border: 1px solid #cbd5e1;
+            height: 75px;
+            position: relative;
+        }
+        .item-no {
+            width: 45px;
+            background-color: #f1f5f9;
+            text-align: center;
+            font-weight: 900;
+            color: var(--paichai-navy);
+            font-size: 1rem;
+            border-right: 2px solid #e2e8f0;
+        }
+        
+        /* Dashed Guide Lines */
+        .guide-line-h {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            border-top: 1px dashed #e2e8f0;
+            pointer-events: none;
+        }
+        .guide-line-v {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            border-left: 1px dashed #e2e8f0;
+            pointer-events: none;
+        }
+
+        .header-brand-border {
+            border-bottom: 4px solid var(--paichai-navy);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Action Button (No Print) -->
+    <div class="fixed top-8 right-8 no-print flex flex-col gap-4">
+        <button onclick="window.print()" class="bg-[#1A2F8A] hover:bg-[#15246a] text-white px-8 py-4 rounded-2xl shadow-2xl font-black transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            프린트 하기 (A4)
+        </button>
+        <button onclick="window.close()" class="bg-white text-slate-400 hover:text-slate-600 px-8 py-4 rounded-2xl border border-slate-200 font-bold transition text-sm text-center">
+            닫기
+        </button>
+    </div>
+
+    <div class="a4-page">
+        <!-- Paichai Identity Header -->
+        <div class="flex justify-between items-center mb-8 pb-6 header-brand-border">
+            <div class="flex items-center gap-6">
+                <img src="paichai_header.png" alt="Paichai Header" class="h-16 object-contain">
+                <div class="h-12 w-[1px] bg-slate-200"></div>
+                <div>
+                    <h2 class="text-xl font-black text-[#1A2F8A] tracking-tighter">일본어 수행평가</h2>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Japanese Assessment Sheet</p>
+                </div>
+            </div>
+            <div>
+                <table class="identity-table">
+                    <tr>
+                        <td class="identity-label">학년</td>
+                        <td class="identity-value text-[#1A2F8A]">2</td>
+                        <td class="identity-label">반</td>
+                        <td class="identity-value w-16"></td>
+                        <td class="identity-label">번호</td>
+                        <td class="identity-value w-16"></td>
+                        <td class="identity-label">성명</td>
+                        <td class="identity-value w-32"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Title Section -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-black text-slate-800 tracking-tight mb-2">
+                히라가나 읽고 쓰기 <span class="text-[#C0392B]">평가 답안지</span>
+            </h1>
+            <div class="flex justify-center items-center gap-3">
+                <div class="h-[2px] w-12 bg-[#1A2F8A] opacity-20"></div>
+                <p class="text-xs font-bold text-slate-400 tracking-[0.3em] uppercase">PaiChai Middle School</p>
+                <div class="h-[2px] w-12 bg-[#1A2F8A] opacity-20"></div>
+            </div>
+        </div>
+
+        <!-- Answer Area (2 Columns) -->
+        <div class="flex gap-10 flex-grow mb-10">
+            <!-- Left Column (1-10) -->
+            <div class="flex-1">
+                <table class="answer-table">
+                    <thead>
+                        <tr>
+                            <th class="w-12">No.</th>
+                            <th>답안 작성 (Answer)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="left-tbody">
+                        <!-- Rows injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Right Column (11-20) -->
+            <div class="flex-1">
+                <table class="answer-table">
+                    <thead>
+                        <tr>
+                            <th class="w-12">No.</th>
+                            <th>답안 작성 (Answer)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="right-tbody">
+                        <!-- Rows injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Instructions & Footer -->
+        <div class="mt-auto pt-6 border-t-2 border-slate-100 flex justify-between items-end">
+            <div class="max-w-md">
+                <h4 class="text-xs font-black text-[#1A2F8A] mb-2 uppercase tracking-wider">주의 사항 (Notice)</h4>
+                <ul class="text-[10px] text-slate-400 font-medium space-y-1">
+                    <li class="flex gap-2"><span>•</span> 검은색 또는 파란색 필기구를 사용하여 정확하게 기재하십시오.</li>
+                    <li class="flex gap-2"><span>•</span> 정답 수정 시 수정테이프 사용이 가능합니다.</li>
+                    <li class="flex gap-2"><span>•</span> 글씨를 너무 작거나 흐리게 쓰지 않도록 주의하십시오.</li>
+                </ul>
+            </div>
+            <div class="text-right">
+                <p class="text-sm font-black text-[#1A2F8A] mb-1">배재중학교 일본어과</p>
+                <p class="text-[10px] italic text-slate-400">“크고자 하거든 남을 섬기라”</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function renderRows() {
+            const leftTbody = document.getElementById('left-tbody');
+            const rightTbody = document.getElementById('right-tbody');
+            
+            const createRow = (i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="item-no">${i}</td>
+                    <td>
+                        <div class="guide-line-h"></div>
+                        <div class="guide-line-v"></div>
+                    </td>
+                `;
+                return tr;
+            };
+
+            for(let i=1; i<=10; i++) leftTbody.appendChild(createRow(i));
+            for(let i=11; i<=20; i++) rightTbody.appendChild(createRow(i));
+        }
+        renderRows();
+    </script>
+</body>
+</html>
