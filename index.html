@@ -761,7 +761,7 @@
          * 화면 D: STUDY (문제은행 전체보기)
          */
         function renderStudy(container) {
-            container.innerHTML = \`
+            container.innerHTML = `
                 <div class="flex flex-col flex-grow fade-in h-full relative">
                     <!-- 배경 글로우 -->
                     <div class="hero-glow" style="top: -10%; left: -10%; background: var(--color-primary); opacity: 0.05;"></div>
@@ -774,7 +774,7 @@
                                 STUDY MODE
                             </div>
                             <h2 class="text-4xl font-black text-[#1A2F8A]">전체 문항 학습</h2>
-                            <p class="text-lg font-medium text-slate-400 mt-2">출제 가능한 전체 문제은행을 확인하고 학습하세요. (총 \${state.questionBank.length}문항)</p>
+                            <p class="text-lg font-medium text-slate-400 mt-2">출제 가능한 전체 문제은행을 확인하고 학습하세요. (총 ${state.questionBank.length}문항)</p>
                         </div>
                         <button onclick="goToSetup()" class="btn-outline px-6 bg-white">
                             ← 뒤로가기
@@ -783,23 +783,23 @@
 
                     <div class="flex-grow overflow-y-auto pr-4 custom-scrollbar pb-12 relative z-10" id="study-scroll-container">
                         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                            \${state.questionBank.map((q, idx) => \`
+                            ${state.questionBank.map((q, idx) => `
                                 <div class="glass-card flex flex-col p-7 hover:-translate-y-1 transition-all duration-300 border border-slate-200/60 hover:border-[#1A2F8A]/30 hover:shadow-xl hover:shadow-indigo-500/10 bg-white/70 backdrop-blur-md">
-                                    <div class="text-sm font-black text-slate-300 mb-4 tracking-wider">QUESTION \${String(idx + 1).padStart(2, '0')}</div>
-                                    <div class="text-3xl font-bold text-[#1A2F8A] mb-8 japanese-font break-keep leading-snug">\${q.question}</div>
+                                    <div class="text-sm font-black text-slate-300 mb-4 tracking-wider">QUESTION ${String(idx + 1).padStart(2, '0')}</div>
+                                    <div class="text-3xl font-bold text-[#1A2F8A] mb-8 japanese-font break-keep leading-snug">${q.question}</div>
                                     <div class="mt-auto pt-4 border-t border-slate-100">
                                         <div class="text-xs font-black text-slate-400 mb-1">정답</div>
-                                        <div class="text-xl font-black text-[#C0392B]">\${q.answer}</div>
+                                        <div class="text-xl font-black text-[#C0392B]">${q.answer}</div>
                                     </div>
                                 </div>
-                            \`).join('')}
+                            `).join('')}
                         </div>
                         <div class="mt-12 text-center">
                              <button onclick="document.getElementById('study-scroll-container').scrollTo({top: 0, behavior: 'smooth'})" class="text-[#1A2F8A] font-black hover:underline uppercase tracking-widest px-4 py-2">Back to top ↑</button>
                         </div>
                     </div>
                 </div>
-            \`;
+            `;
         }
 
         /**
