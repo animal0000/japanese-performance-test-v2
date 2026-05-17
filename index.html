@@ -200,6 +200,12 @@
 
     <script>
         /**
+         * 스토리지 키
+         */
+        const STORAGE_KEY = 'JP_V2_QUESTION_BANK';
+        const STORAGE_DATE_KEY = 'JP_V2_UPDATED_AT';
+
+        /**
          * 상태 관리
          */
         let state = {
@@ -240,35 +246,69 @@
         };
 
         /**
-         * CSV 문제은행 로드
+         * CSV 텍스트를 문제 배열로 파싱
          */
-        async function loadQuestionBank() {
+        function parseCSV(text) {
+            const rows = text.split('\n').filter(r => r.trim());
+            return rows.map(row => {
+                const match = row.match(/^"?([^"]*)"?\s*,\s*"?([^"]*)"?\s*$/);
+                if (match) {
+                    return { question: match[1].trim(), answer: match[2].trim() };
+                }
+                const cols = row.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+                return { question: cols[0] || '', answer: cols[1] || '' };
+            }).filter(item => item.question && item.answer);
+        }
+
+        /**
+         * localStorage에 문제은행 저장
+         */
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state.questionBank));
+            localStorage.setItem(STORAGE_DATE_KEY, state.lastUpdated.toISOString());
+        }
+
+        /**
+         * localStorage에서 문제은행 로드 (있으면 true)
+         */
+        function loadFromStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            const savedDate = localStorage.getItem(STORAGE_DATE_KEY);
+            if (saved) {
+                state.questionBank = JSON.parse(saved);
+                state.lastUpdated = savedDate ? new Date(savedDate) : new Date();
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * 서버 CSV에서 문제은행 로드 (최초 또는 초기화 시)
+         */
+        async function loadFromServer() {
             try {
                 const res = await fetch('./questions.csv');
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-                // Last-Modified 헤더에서 날짜 추출, 없으면 현재 날짜
                 const lastMod = res.headers.get('Last-Modified');
                 state.lastUpdated = lastMod ? new Date(lastMod) : new Date();
 
                 const text = await res.text();
-                const rows = text.split('\n').filter(r => r.trim());
-
-                state.questionBank = rows.map(row => {
-                    // CSV 파싱: 쉼표 구분, 따옴표 처리
-                    const match = row.match(/^"?([^"]*)"?\s*,\s*"?([^"]*)"?\s*$/);
-                    if (match) {
-                        return { question: match[1].trim(), answer: match[2].trim() };
-                    }
-                    // 단순 쉼표 분리 fallback
-                    const cols = row.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-                    return { question: cols[0] || '', answer: cols[1] || '' };
-                }).filter(item => item.question && item.answer);
-
+                state.questionBank = parseCSV(text);
+                saveToStorage();
                 return true;
             } catch (e) {
                 console.error('CSV 로드 실패:', e);
                 return false;
+            }
+        }
+
+        /**
+         * 문제은행 로드 (localStorage 우선 → 서버 fallback)
+         */
+        async function loadQuestionBank() {
+            if (!loadFromStorage()) {
+                await loadFromServer();
             }
         }
 
@@ -368,6 +408,9 @@
                                 📂 CSV 교체
                                 <input type="file" accept=".csv" class="hidden" onchange="handleCSVUpload(event)">
                             </label>
+                            <button onclick="resetToDefault()" class="btn-outline flex items-center gap-2 text-slate-400 hover:text-[#C0392B]">
+                                🔄 기본 데이터로 초기화
+                            </button>
                         </div>
 
                         ${!canStart ? `
@@ -381,7 +424,7 @@
         }
 
         /**
-         * CSV 업로드 처리 (런타임 교체)
+         * CSV 업로드 처리 (localStorage에 영구 저장)
          */
         window.handleCSVUpload = (e) => {
             const file = e.target.files[0];
@@ -389,19 +432,23 @@
             const reader = new FileReader();
             reader.onload = (event) => {
                 const text = event.target.result;
-                const rows = text.split('\n').filter(r => r.trim());
-                state.questionBank = rows.map(row => {
-                    const match = row.match(/^"?([^"]*)"?\s*,\s*"?([^"]*)"?\s*$/);
-                    if (match) {
-                        return { question: match[1].trim(), answer: match[2].trim() };
-                    }
-                    const cols = row.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-                    return { question: cols[0] || '', answer: cols[1] || '' };
-                }).filter(item => item.question && item.answer);
+                state.questionBank = parseCSV(text);
                 state.lastUpdated = new Date();
+                saveToStorage();
                 render();
             };
             reader.readAsText(file);
+        };
+
+        /**
+         * 기본 데이터(서버 CSV)로 초기화
+         */
+        window.resetToDefault = async () => {
+            if (!confirm('업로드한 CSV를 삭제하고 기본 데이터로 초기화합니다.\n계속하시겠습니까?')) return;
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_DATE_KEY);
+            await loadFromServer();
+            render();
         };
 
         /**
