@@ -354,12 +354,10 @@
         }
 
         /**
-         * 문제은행 로드 (localStorage 우선 → 서버 fallback)
+         * 문제은행 로드 (항상 서버 최신 CSV에서 로드하고 로컬 갱신)
          */
         async function loadQuestionBank() {
-            if (!loadFromStorage()) {
-                await loadFromServer();
-            }
+            await loadFromServer();
         }
 
         /**
